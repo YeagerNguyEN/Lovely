@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Love Question</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #ffd6e0, #ffe6f0);
+        overflow: hidden;
+      }
+
+      .container {
+        text-align: center;
+        position: relative;
+      }
+
+      #gif {
+        width: 250px;
+        border-radius: 20px;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        color: #d63384;
+        margin-bottom: 40px;
+      }
+
+      .buttons {
+        position: relative;
+        display: inline-block;
+        width: 300px; /* khung chứa nút */
+        height: 60px;
+      }
+
+      #yes,
+      #no {
+        padding: 10px 25px;
+        font-size: 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      #yes {
+        background: #ff85a2;
+        color: white;
+        position: absolute;
+        left: 25%; /* đặt cố định 1/4 */
+        top: 0;
+        transform: translateX(-50%);
+        transition: transform 0.2s;
+      }
+
+      #yes:hover {
+        transform: translateX(-50%) scale(1.1);
+      }
+
+      #no {
+        background: #6c757d;
+        color: white;
+        position: absolute;
+        left: 75%; /* đặt cố định 3/4 */
+        top: 0;
+        transform: translateX(-50%);
+      }
+
+      .break-heart {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(1);
+        font-size: 120px;
+        color: #ff4d6d;
+        animation: pulse 1s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.3);
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="container">
+      <img
+        id="gif"
+        src="https://i.pinimg.com/originals/3c/e8/84/3ce884bb29ad1909a2c253354497420f.gif"
+        alt="cute cat gif"
+      />
+      <h1 id="question">Do you want to be my lover? 💕</h1>
+      <div class="buttons" id="buttons">
+        <button id="yes">Yes</button>
+        <button id="no">No</button>
+      </div>
+    </div>
+
+    <script>
+      const yesBtn = document.getElementById("yes");
+      const noBtn = document.getElementById("no");
+      const gif = document.getElementById("gif");
+      const question = document.getElementById("question");
+      const buttons = document.getElementById("buttons");
+      const container = document.getElementById("container");
+
+      // ------------------- Xử lý Nút NO -------------------
+      document.addEventListener("mousemove", (e) => {
+        if (isMobile()) return;
+        const rect = noBtn.getBoundingClientRect();
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+        const buffer = 60;
+
+        if (
+          mouseX > rect.left - buffer &&
+          mouseX < rect.right + buffer &&
+          mouseY > rect.top - buffer &&
+          mouseY < rect.bottom + buffer
+        ) {
+          moveNoButton();
+        }
+      });
+
+      noBtn.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        moveNoButton();
+      });
+
+      function moveNoButton() {
+        noBtn.style.position = "fixed"; // chạy tự do
+        const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+        const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+        noBtn.style.left = `${x}px`;
+        noBtn.style.top = `${y}px`;
+      }
+
+      // ------------------- Xử lý Nút YES -------------------
+      yesBtn.addEventListener("click", () => {
+        gif.remove();
+        question.remove();
+        buttons.remove();
+
+        const heart = document.createElement("div");
+        heart.classList.add("break-heart");
+        heart.textContent = "💖";
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+          heart.remove();
+
+          const newGif = document.createElement("img");
+          newGif.id = "gif";
+          newGif.src =
+            "https://i.pinimg.com/originals/92/c4/2f/92c42fb1c24200e23ac70dfa011e30b1.gif";
+          newGif.style.width = "250px";
+          newGif.style.borderRadius = "20px";
+          newGif.style.marginBottom = "20px";
+          container.appendChild(newGif);
+
+          const finalText = document.createElement("h1");
+          finalText.id = "question";
+          finalText.textContent = "I knew it 💖";
+          finalText.style.color = "#d63384";
+          container.appendChild(finalText);
+        }, 2000);
+      });
+
+      function isMobile() {
+        return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      }
+    </script>
+  </body>
+</html>
