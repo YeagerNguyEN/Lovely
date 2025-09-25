@@ -39,7 +39,7 @@
       .buttons {
         position: relative;
         display: inline-block;
-        width: 300px; /* khung chứa nút */
+        width: 300px;
         height: 60px;
       }
 
@@ -56,7 +56,7 @@
         background: #ff85a2;
         color: white;
         position: absolute;
-        left: 25%; /* đặt cố định 1/4 */
+        left: 25%;
         top: 0;
         transform: translateX(-50%);
         transition: transform 0.2s;
@@ -70,7 +70,7 @@
         background: #6c757d;
         color: white;
         position: absolute;
-        left: 75%; /* đặt cố định 3/4 */
+        left: 75%;
         top: 0;
         transform: translateX(-50%);
       }
@@ -120,6 +120,8 @@
       const buttons = document.getElementById("buttons");
       const container = document.getElementById("container");
 
+      let noMoved = false; // kiểm tra đã từng di chuyển no chưa
+
       // ------------------- Xử lý Nút NO -------------------
       document.addEventListener("mousemove", (e) => {
         if (isMobile()) return;
@@ -144,9 +146,17 @@
       });
 
       function moveNoButton() {
-        noBtn.style.position = "fixed"; // chạy tự do
-        const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-        const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+        noMoved = true; // đánh dấu đã di chuyển
+        noBtn.style.position = "fixed";
+        const padding = 30; // tránh ra ngoài màn hình
+        const x =
+          Math.random() *
+            (window.innerWidth - noBtn.offsetWidth - padding * 2) +
+          padding;
+        const y =
+          Math.random() *
+            (window.innerHeight - noBtn.offsetHeight - padding * 2) +
+          padding;
         noBtn.style.left = `${x}px`;
         noBtn.style.top = `${y}px`;
       }
@@ -176,7 +186,7 @@
 
           const finalText = document.createElement("h1");
           finalText.id = "question";
-          finalText.textContent = "I knew it 💖";
+          finalText.textContent = noMoved ? "I knew it 💖" : "Luv youu 💖💖"; // kiểm tra trạng thái
           finalText.style.color = "#d63384";
           container.appendChild(finalText);
         }, 2000);
