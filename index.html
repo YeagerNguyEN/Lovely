@@ -8,6 +8,12 @@
     />
     <title>Love Question</title>
     <style>
+      * {
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10+ */
+        user-select: none; /* Chặn bôi đen chữ */
+      }
+
       body {
         margin: 0;
         padding: 0;
@@ -165,7 +171,7 @@
         } while (
           lastX !== null &&
           lastY !== null &&
-          Math.abs(x - lastX) < 50 && // tránh trùng/gần vị trí cũ
+          Math.abs(x - lastX) < 50 &&
           Math.abs(y - lastY) < 50
         );
 
