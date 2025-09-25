@@ -105,7 +105,7 @@
         src="https://i.pinimg.com/originals/3c/e8/84/3ce884bb29ad1909a2c253354497420f.gif"
         alt="cute cat gif"
       />
-      <h1 id="question">Do you want to be my lover? 💕</h1>
+      <h1 id="question">Do you want to be my Girlfriend? 💕</h1>
       <div class="buttons" id="buttons">
         <button id="yes">Yes</button>
         <button id="no">No</button>
@@ -120,7 +120,9 @@
       const buttons = document.getElementById("buttons");
       const container = document.getElementById("container");
 
-      let noMoved = false; // kiểm tra đã từng di chuyển no chưa
+      let noMoved = false;
+      let lastX = null,
+        lastY = null; // lưu vị trí cũ
 
       // ------------------- Xử lý Nút NO -------------------
       document.addEventListener("mousemove", (e) => {
@@ -146,17 +148,30 @@
       });
 
       function moveNoButton() {
-        noMoved = true; // đánh dấu đã di chuyển
+        noMoved = true;
         noBtn.style.position = "fixed";
-        const padding = 30; // tránh ra ngoài màn hình
-        const x =
-          Math.random() *
-            (window.innerWidth - noBtn.offsetWidth - padding * 2) +
-          padding;
-        const y =
-          Math.random() *
-            (window.innerHeight - noBtn.offsetHeight - padding * 2) +
-          padding;
+        const padding = 30;
+        let x, y;
+
+        do {
+          x =
+            Math.random() *
+              (window.innerWidth - noBtn.offsetWidth - padding * 2) +
+            padding;
+          y =
+            Math.random() *
+              (window.innerHeight - noBtn.offsetHeight - padding * 2) +
+            padding;
+        } while (
+          lastX !== null &&
+          lastY !== null &&
+          Math.abs(x - lastX) < 50 && // tránh trùng/gần vị trí cũ
+          Math.abs(y - lastY) < 50
+        );
+
+        lastX = x;
+        lastY = y;
+
         noBtn.style.left = `${x}px`;
         noBtn.style.top = `${y}px`;
       }
@@ -186,7 +201,7 @@
 
           const finalText = document.createElement("h1");
           finalText.id = "question";
-          finalText.textContent = noMoved ? "I knew it 💖" : "Luv youu 💖💖"; // kiểm tra trạng thái
+          finalText.textContent = noMoved ? "I knew it 💖" : "Luv youuu 💖💖";
           finalText.style.color = "#d63384";
           container.appendChild(finalText);
         }, 2000);
