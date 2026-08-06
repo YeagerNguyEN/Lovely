@@ -7,21 +7,25 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Love Question</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+    
     <style>
       * {
-        -webkit-user-select: none; /* Safari */
-        -ms-user-select: none; /* IE 10+ */
-        user-select: none; /* Chặn bôi đen chữ */
+        box-sizing: border-box;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent; /* Tắt viền xanh khi chạm trên Android */
       }
 
       body {
         margin: 0;
         padding: 0;
-        font-family: "Comic Sans MS", cursive, sans-serif;
+        font-family: "Quicksand", sans-serif;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        min-height: 100vh;
         background: linear-gradient(135deg, #ffd6e0, #ffe6f0);
         overflow: hidden;
       }
@@ -29,56 +33,73 @@
       .container {
         text-align: center;
         position: relative;
+        width: 90%;
+        max-width: 400px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
 
       #gif {
-        width: 250px;
+        width: 100%;
+        max-width: 220px;
         border-radius: 20px;
         margin-bottom: 20px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
       }
 
       h1 {
         color: #d63384;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
+        font-size: clamp(1.5rem, 5vw, 2rem);
+        line-height: 1.4;
       }
 
       .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 30px; /* Khoảng cách giữa 2 nút */
+        width: 100%;
+        height: 50px;
         position: relative;
-        display: inline-block;
-        width: 300px;
-        height: 60px;
       }
 
-      #yes,
-      #no {
-        padding: 10px 25px;
+      /* Khung bao bọc giữ vị trí cho các nút không bị dịch chuyển */
+      .btn-wrapper {
+        width: 120px;
+        height: 50px;
+        position: relative;
+      }
+
+      button {
+        width: 100%;
+        height: 100%;
         font-size: 18px;
+        font-weight: 700;
+        font-family: "Quicksand", sans-serif;
         border: none;
-        border-radius: 10px;
+        border-radius: 30px;
         cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
       }
 
       #yes {
-        background: #ff85a2;
+        background: #ff4d6d;
         color: white;
-        position: absolute;
-        left: 25%;
-        top: 0;
-        transform: translateX(-50%);
-        transition: transform 0.2s;
       }
 
-      #yes:hover {
-        transform: translateX(-50%) scale(1.1);
+      #yes:hover, #yes:active {
+        transform: scale(1.1);
+        box-shadow: 0 6px 15px rgba(255, 77, 109, 0.4);
       }
 
       #no {
         background: #6c757d;
         color: white;
-        position: absolute;
-        left: 75%;
+        position: absolute; /* Tuyệt đối so với .btn-wrapper lúc đầu */
         top: 0;
-        transform: translateX(-50%);
+        left: 0;
       }
 
       .break-heart {
@@ -86,21 +107,15 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%) scale(1);
-        font-size: 120px;
+        font-size: clamp(80px, 20vw, 120px);
         color: #ff4d6d;
         animation: pulse 1s infinite;
       }
 
       @keyframes pulse {
-        0% {
-          transform: translate(-50%, -50%) scale(1);
-        }
-        50% {
-          transform: translate(-50%, -50%) scale(1.3);
-        }
-        100% {
-          transform: translate(-50%, -50%) scale(1);
-        }
+        0% { transform: translate(-50%, -50%) scale(1); }
+        50% { transform: translate(-50%, -50%) scale(1.2); }
+        100% { transform: translate(-50%, -50%) scale(1); }
       }
     </style>
   </head>
@@ -113,8 +128,12 @@
       />
       <h1 id="question">Do you want to be my Girlfriend? 💕</h1>
       <div class="buttons" id="buttons">
-        <button id="yes">Yes</button>
-        <button id="no">No</button>
+        <div class="btn-wrapper">
+          <button id="yes">Yes</button>
+        </div>
+        <div class="btn-wrapper">
+          <button id="no">No</button>
+        </div>
       </div>
     </div>
 
@@ -127,57 +146,69 @@
       const container = document.getElementById("container");
 
       let noMoved = false;
-      let lastX = null,
-        lastY = null; // lưu vị trí cũ
+      let lastX = null, lastY = null;
 
       // ------------------- Xử lý Nút NO -------------------
       document.addEventListener("mousemove", (e) => {
         if (isMobile()) return;
         const rect = noBtn.getBoundingClientRect();
-        const mouseX = e.clientX;
-        const mouseY = e.clientY;
-        const buffer = 60;
+        const buffer = 50;
 
         if (
-          mouseX > rect.left - buffer &&
-          mouseX < rect.right + buffer &&
-          mouseY > rect.top - buffer &&
-          mouseY < rect.bottom + buffer
+          e.clientX > rect.left - buffer &&
+          e.clientX < rect.right + buffer &&
+          e.clientY > rect.top - buffer &&
+          e.clientY < rect.bottom + buffer
         ) {
           moveNoButton();
         }
       });
 
       noBtn.addEventListener("touchstart", (e) => {
-        e.preventDefault();
+        e.preventDefault(); 
         moveNoButton();
       });
 
       function moveNoButton() {
-        noMoved = true;
-        noBtn.style.position = "fixed";
-        const padding = 30;
+        if (!noMoved) {
+          noMoved = true;
+          
+          // Lấy vị trí thực tế của nút No ngay trước khi dịch chuyển
+          const rect = noBtn.getBoundingClientRect();
+          
+          // Khóa cứng tọa độ cũ của nút No dưới dạng Fixed để không bị giật phát đầu
+          noBtn.style.left = `${rect.left}px`;
+          noBtn.style.top = `${rect.top}px`;
+          noBtn.style.width = `${rect.width}px`;
+          noBtn.style.height = `${rect.height}px`;
+          noBtn.style.position = "fixed";
+          noBtn.style.zIndex = "999";
+          
+          // Ép trình duyệt cập nhật lại giao diện trước khi áp dụng tọa độ mới
+          noBtn.offsetHeight; 
+        }
+
+        const padding = 20;
+        const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+        const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+
         let x, y;
 
         do {
-          x =
-            Math.random() *
-              (window.innerWidth - noBtn.offsetWidth - padding * 2) +
-            padding;
-          y =
-            Math.random() *
-              (window.innerHeight - noBtn.offsetHeight - padding * 2) +
-            padding;
+          x = Math.max(padding, Math.random() * maxX);
+          y = Math.max(padding, Math.random() * maxY);
         } while (
           lastX !== null &&
           lastY !== null &&
-          Math.abs(x - lastX) < 50 &&
-          Math.abs(y - lastY) < 50
+          Math.abs(x - lastX) < 80 && 
+          Math.abs(y - lastY) < 80
         );
 
         lastX = x;
         lastY = y;
 
+        // Sử dụng hiệu ứng Trượt (Transition) với gia tốc mượt mà (cubic-bezier) giúp chuyển động sinh động hơn
+        noBtn.style.transition = "left 0.35s cubic-bezier(0.25, 1, 0.5, 1), top 0.35s cubic-bezier(0.25, 1, 0.5, 1)";
         noBtn.style.left = `${x}px`;
         noBtn.style.top = `${y}px`;
       }
@@ -198,17 +229,19 @@
 
           const newGif = document.createElement("img");
           newGif.id = "gif";
-          newGif.src =
-            "https://i.pinimg.com/originals/92/c4/2f/92c42fb1c24200e23ac70dfa011e30b1.gif";
-          newGif.style.width = "250px";
+          newGif.src = "https://i.pinimg.com/originals/92/c4/2f/92c42fb1c24200e23ac70dfa011e30b1.gif";
+          newGif.style.width = "100%";
+          newGif.style.maxWidth = "220px";
           newGif.style.borderRadius = "20px";
           newGif.style.marginBottom = "20px";
+          newGif.style.boxShadow = "0 8px 15px rgba(0, 0, 0, 0.1)";
           container.appendChild(newGif);
 
           const finalText = document.createElement("h1");
           finalText.id = "question";
           finalText.textContent = noMoved ? "I knew it 💖" : "Luv youuu 💖💖";
           finalText.style.color = "#d63384";
+          finalText.style.fontSize = "clamp(1.8rem, 6vw, 2.5rem)";
           container.appendChild(finalText);
         }, 2000);
       });
@@ -219,3 +252,4 @@
     </script>
   </body>
 </html>
+
